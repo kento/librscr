@@ -1,0 +1,173 @@
+Node directory: /home/usr2/11D37048/ibtl/ndpool alread exist. skipped.
+Node directory: /home/usr2/11D37048/ibtl/ndpool/t2a003032 alread exist. skipped.
+Node directory: /home/usr2/11D37048/ibtl/ndpool/t2a003032/10.1.3.32 alread exist. skipped.
+10.1.3.32:45954 Joined !
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0xf80028aa, rkey=0xf80028aa
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ab90, length=120, lkey=0xf80029aa, rkey=0xf80029aa
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0xf8002aaa, rkey=0x2afaf8002aaa
+RDMA lib: COMM: Reg(0x67afd0): addr=0x67af10, length=120, lkey=0xf8002baa, rkey=0x2afaf8002baa
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac50 120 0x67ab90
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x7fffd0004070, length=144, lkey=0x80028ab, rkey=0x80028ab
+PATH: /work0/t2g-PPC-nomura/11D37048/scr/flush_cpt/scr.dataset.1/testFile.00000000.0, ID: 3031 size:10485760
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0x80029ab, rkey=0x2afa080029ab
+RDMA lib: COMM: Reg(0x675b70): addr=0x67b090, length=120, lkey=0x8002cab, rkey=0x2afa08002cab
+2.dereg: mr:0x67ac50 144 0x7fffd0004070
+3.de
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67afd0 120 0x67af10
+3.de
+RDMA lib: COMM: Reg(0x67afd0): addr=0x2afab3da4000, length=10485760, lkey=0x200028ab, rkey=0x7fff200028ab
+====> 0x2afab3da4000
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0x20002aab, rkey=0x2afa20002aab
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ab90, length=120, lkey=0x20002bab, rkey=0x2afa20002bab
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67b090
+3.de
+3031: 2.offset: 1048576, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x675b70): addr=0x67ab10, length=120, lkey=0x300029ab, rkey=0x2afa300029ab
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67adb0, length=120, lkey=0x30002cab, rkey=0x2afa30002cab
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67ac50 120 0x67ab90
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ae90, length=120, lkey=0x40002aab, rkey=0x2afa40002aab
+RDMA lib: COMM: Reg(0x67af90): addr=0x67b090, length=120, lkey=0x40002bab, rkey=0x2afa40002bab
+2.dereg: mr:0x675b70 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac10 120 0x67adb0
+3.de
+3031: 2.offset: 2097152, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0x500029ab, rkey=0x2afa500029ab
+RDMA lib: COMM: Reg(0x675b70): addr=0x67af10, length=120, lkey=0x50002cab, rkey=0x2afa50002cab
+2.dereg: mr:0x67ac50 120 0x67ae90
+3.de
+2.dereg: mr:0x67af90 120 0x67b090
+3.de
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0x60002aab, rkey=0x2afa60002aab
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67adb0, length=120, lkey=0x60002bab, rkey=0x2afa60002bab
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67af10
+3.de
+3031: 2.offset: 3145728, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x675b70): addr=0x67ab10, length=120, lkey=0x700029ab, rkey=0x2afa700029ab
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab90, length=120, lkey=0x70002cab, rkey=0x2afa70002cab
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67ac50 120 0x67adb0
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ae90, length=120, lkey=0x80002aab, rkey=0x2afa80002aab
+RDMA lib: COMM: Reg(0x67af90): addr=0x67af10, length=120, lkey=0x80002bab, rkey=0x2afa80002bab
+2.dereg: mr:0x675b70 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac10 120 0x67ab90
+3.de
+3031: 2.offset: 4194304, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0x900029ab, rkey=0x2afa900029ab
+RDMA lib: COMM: Reg(0x675b70): addr=0x67b090, length=120, lkey=0x90002cab, rkey=0x2afa90002cab
+2.dereg: mr:0x67ac50 120 0x67ae90
+3.de
+2.dereg: mr:0x67af90 120 0x67af10
+3.de
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0xa0002aab, rkey=0x2afaa0002aab
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ab90, length=120, lkey=0xa0002bab, rkey=0x2afaa0002bab
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67b090
+3.de
+3031: 2.offset: 5242880, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x675b70): addr=0x67ab10, length=120, lkey=0xb00029ab, rkey=0x2afab00029ab
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67adb0, length=120, lkey=0xb0002cab, rkey=0x2afab0002cab
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67ac50 120 0x67ab90
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ae90, length=120, lkey=0xc0002aab, rkey=0x2afac0002aab
+RDMA lib: COMM: Reg(0x67af90): addr=0x67b090, length=120, lkey=0xc0002bab, rkey=0x2afac0002bab
+2.dereg: mr:0x675b70 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac10 120 0x67adb0
+3.de
+3031: 2.offset: 6291456, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0xd00029ab, rkey=0x2afad00029ab
+RDMA lib: COMM: Reg(0x675b70): addr=0x67af10, length=120, lkey=0xd0002cab, rkey=0x2afad0002cab
+2.dereg: mr:0x67ac50 120 0x67ae90
+3.de
+2.dereg: mr:0x67af90 120 0x67b090
+3.de
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0xe0002aab, rkey=0x2afae0002aab
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67adb0, length=120, lkey=0xe0002bab, rkey=0x2afae0002bab
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67af10
+3.de
+3031: 2.offset: 7340032, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x675b70): addr=0x67ab10, length=120, lkey=0xf00029ab, rkey=0x2afaf00029ab
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab90, length=120, lkey=0xf0002cab, rkey=0x2afaf0002cab
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67ac50 120 0x67adb0
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ae90, length=120, lkey=0x2aac, rkey=0x2afa00002aac
+RDMA lib: COMM: Reg(0x67af90): addr=0x67af10, length=120, lkey=0x2bac, rkey=0x2afa00002bac
+2.dereg: mr:0x675b70 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac10 120 0x67ab90
+3.de
+3031: 2.offset: 8388608, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0x100029ac, rkey=0x2afa100029ac
+RDMA lib: COMM: Reg(0x675b70): addr=0x67b090, length=120, lkey=0x10002cac, rkey=0x2afa10002cac
+2.dereg: mr:0x67ac50 120 0x67ae90
+3.de
+2.dereg: mr:0x67af90 120 0x67af10
+3.de
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0x20002aac, rkey=0x2afa20002aac
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ab90, length=120, lkey=0x20002bac, rkey=0x2afa20002bac
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67b090
+3.de
+3031: 2.offset: 9437184, size: 10485760, req_id:3031
+RDMA lib: COMM: Reg(0x675b70): addr=0x67ab10, length=120, lkey=0x300029ac, rkey=0x2afa300029ac
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67adb0, length=120, lkey=0x30002cac, rkey=0x2afa30002cac
+2.dereg: mr:0x67af90 120 0x67ae90
+3.de
+2.dereg: mr:0x67ac50 120 0x67ab90
+3.de
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67ae90, length=120, lkey=0x40002aac, rkey=0x2afa40002aac
+RDMA lib: COMM: Reg(0x67af90): addr=0x67b090, length=120, lkey=0x40002bac, rkey=0x2afa40002bac
+2.dereg: mr:0x675b70 120 0x67ab10
+3.de
+2.dereg: mr:0x67ac10 120 0x67adb0
+3.de
+3031: 2.offset: 10485760, size: 10485760, req_id:3031
+1.Frees
+2.Frees
+3.Frees
+====> 0x2afab3da4000
+free
+0.free
+1.free
+2.free
+3.free
+4.free 0x67afd0
+RDMA lib: COMM: Reg(0x67ac10): addr=0x67ab10, length=120, lkey=0x500029ac, rkey=0x2afa500029ac
+RDMA lib: COMM: Reg(0x675b70): addr=0x67af10, length=120, lkey=0x50002cac, rkey=0x2afa50002cac
+2.dereg: mr:0x67afd0 10485760 0x2afab3da4000
+3.de
+2.dereg: mr:0x67ac50 120 0x67ae90
+3.de
+2.dereg: mr:0x67af90 120 0x67b090
+3.de
+RDMA lib: COMM: Reg(0x67af90): addr=0x67ae90, length=120, lkey=0x680028ac, rkey=0x2afa680028ac
+RDMA lib: COMM: Reg(0x67ac50): addr=0x67adb0, length=120, lkey=0x68002aac, rkey=0x2afa68002aac
+2.dereg: mr:0x67ac10 120 0x67ab10
+3.de
+2.dereg: mr:0x675b70 120 0x67af10
+3.de
+2.dereg: mr:0x67afd0 10485760 0x2afab3da4000

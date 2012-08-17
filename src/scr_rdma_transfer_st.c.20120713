@@ -1,0 +1,275 @@
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include "ibtls.h"
+#include "common.h"
+#include "transfer.h"
+#include "pgz.h"
+
+#define COMPRESS 0
+
+struct write_args {
+  char *path;
+  char *addr;
+  int size; 
+};
+
+int dump_ckpt(struct write_args *wa);
+ssize_t write_ckpt(const char* file, int fd, const void* buf, size_t size);
+int simple_write(struct write_args *wa);
+int compress_write(struct write_args *wa) ;
+
+
+pthread_mutex_t compress_mutex = PTHREAD_MUTEX_INITIALIZER;
+int comp_count = 0;
+pthread_mutex_t dump_mutex = PTHREAD_MUTEX_INITIALIZER;
+int dump_count = 0;
+pthread_t dump_thread;
+
+int main(int argc, char **argv) 
+{
+  struct RDMA_communicator comm;
+  struct RDMA_request *req1, *req2;
+  struct scr_transfer_ctl ctl[NUM_BUFF];
+  char *data[NUM_BUFF];
+  int i;
+  uint64_t  size = (512 + 128) * 1024 * 1024;//(1024 + 512) * 1024 * 1024;
+  int buff_index = 0;
+  int recv_size = -1;
+  int ckpt_size = 0;
+  pthread_t thread;
+
+  struct write_args wa[NUM_BUFF];
+
+  int req_num = 2;
+  struct RDMA_request req[req_num];
+  int req_id = 0;
+  int ctl_tag;
+
+  double rdma_s, rdma_e;
+  int count = 0;
+
+
+  RDMA_Passive_Init(&comm);
+  for (i = 0; i < NUM_BUFF; i++) {  
+    data[i] = RDMA_Alloc(size);
+  }
+
+  while(1) {
+    ckpt_size = 0;
+    recv_size = -1;
+
+
+    RDMA_Recv(&ctl[buff_index], sizeof(ctl[buff_index]), NULL, RDMA_ANY_SOURCE, 0, &comm);
+
+    //    fprintf(stderr, "PATH: %s, ID: %d \n", ctl[buff_index].path, ctl[buff_index].id);
+    while (recv_size > 0 || recv_size == -1) {
+      //      fprintf(stderr, ":RDMA_Recv started\n");
+      rdma_s = get_dtime();
+      RDMA_Recv(data[buff_index], size, NULL, RDMA_ANY_SOURCE, 1, &comm);
+
+      //      fprintf(stderr, ":RDMA_Recv ends\n");
+      memcpy(&recv_size, data[buff_index], sizeof(int));
+      //      fprintf(stderr, "resv_size: %d\n", recv_size);
+      if (recv_size == 0) break;
+
+
+      wa[buff_index].path = ctl[buff_index].path;
+      wa[buff_index].addr = data[buff_index] + sizeof(int);
+      wa[buff_index].size = recv_size;
+      rdma_e = get_dtime();
+      fprintf(stderr, "OVLP: RDMA %f %d %f %f %s\n",rdma_s, count, rdma_e, rdma_e - rdma_s, wa[buff_index].path);
+      fprintf(stderr, "OVLP: RDMA %f %d\n", rdma_e, count++);
+      fprintf(stderr, "OVLP: RDMA \n");
+#if COMPRESS == 1
+      pthread_mutex_lock(&compress_mutex);
+      if (pthread_create(&thread, NULL, (void *)compress_write, &wa[buff_index])) {
+#else
+      pthread_mutex_lock(&dump_mutex);
+      if (pthread_create(&thread, NULL, (void *)simple_write, &wa[buff_index])) {
+#endif
+	fprintf(stderr, "RDMA lib: SEND: ERROR: pthread create failed @ %s:%d", __FILE__, __LINE__);
+	exit(1);
+      }
+      if (pthread_detach(thread)) {
+	fprintf(stderr, "RDMA lib: SEND: ERROR: pthread detach failed @ %s:%d", __FILE__, __LINE__);
+	exit(1);
+      }
+      buff_index = (buff_index + 1) % NUM_BUFF;
+    }
+    //    fprintf(stderr, " Done\n");
+
+  /*
+  RDMA_Irecv(data[req_id], size, NULL, RDMA_ANY_SOURCE, RDMA_ANY_TAG, &comm, &req[req_id]);  
+  req_id = (req_id + 1) % req_num;
+  fprintf(stderr, "%p: size=%lu: \n", data, size);
+  while (1) {
+    //RDMA_Recv(data, size, NULL, RDMA_ANY_SOURCE, RDMA_ANY_TAG, &comm);  
+    ss = get_dtime();
+    //    RDMA_Recv(data, 1, NULL, RDMA_ANY_SOURCE, RDMA_ANY_TAG, &comm);  
+    RDMA_Irecv(data[req_id], size, NULL, RDMA_ANY_SOURCE, RDMA_ANY_TAG, &comm, &req[req_id]);  
+    req_id = (req_id + 1) % req_num;
+    fprintf(stderr, "req_id:%d\n", req_id);
+    RDMA_Wait(&req[req_id]);
+    ee = get_dtime();
+    fprintf(stderr, "Latency: %d\n", ee - ss);
+    free(req1);
+  }
+  return 0;
+  */
+  }
+}
+
+int simple_write(struct write_args *wa) 
+{
+  int fd;
+  int n_write = 0;
+  int n_write_sum = 0;
+  double write_s, write_e;
+  char *path = wa->path;
+  char *addr = wa->addr;
+  int size   = wa->size;
+
+
+  write_s = get_dtime();
+
+  fd = open(path, O_WRONLY | O_APPEND | O_CREAT, S_IREAD | S_IWRITE); 
+  if (fd <= 0) {
+    fprintf(stderr, "error(%d): path: |%s|, size: %d, fd=%d\n",  errno, path, size, fd);
+    exit(1);
+  }
+  do {
+    n_write = write(fd, (char*)addr + n_write_sum, size - n_write_sum);
+    if (n_write == -1) {
+      fprintf(stderr, "Write error: %d\n", errno);
+      exit(1);
+    }
+    n_write_sum += n_write;
+    if (n_write_sum >= size) break;
+  } while(n_write > 0);
+  fsync(fd);
+  close(fd);
+  write_e = get_dtime();
+  pthread_mutex_unlock(&dump_mutex);
+  fprintf(stderr, "OVLP: WRIT %f %d %f %f\n", write_s, dump_count, write_e, write_e - write_s);
+  fprintf(stderr, "OVLP: WRIT %f %d\n", write_e, dump_count++);
+  fprintf(stderr, "OVLP: WRIT \n");
+}
+
+int compress_write(struct write_args *wa) 
+{
+  struct write_args *cwa;
+  double comp_s, comp_e;
+
+
+  //  fprintf(stderr, "Checkpoint path: %s, %p, %d\n", wa->path, wa->addr, wa->size);
+  //  fprintf(stderr, "ST.");
+  cwa = (struct write_args*)malloc(sizeof(struct write_args));
+  // =======
+  comp_s = get_dtime();
+  cwa->size = pcompress(&(cwa->addr), wa->addr, wa->size);
+  comp_e = get_dtime();
+  fprintf(stderr, "OVLP: COMP %f %d %f %f\n", comp_s, comp_count, comp_e, comp_e - comp_s);
+  fprintf(stderr, "OVLP: COMP %f %d\n", comp_e, comp_count++);
+  fprintf(stderr, "OVLP: COMP \n");
+  //  cwa->size = wa->size;
+  //  cwa->addr = wa->addr;
+  // =======
+  cwa->path = (char *)malloc(256);
+  sprintf(cwa->path, "%s.gz", wa->path);
+
+  {
+    pthread_mutex_lock(&dump_mutex);
+    //  dump(wa->path, wa->addr, wa->size);
+    if (pthread_create(&dump_thread, NULL, (void *)dump_ckpt, cwa)) {
+      fprintf(stderr, "RDMA lib: SEND: ERROR: pthread create failed @ %s:%d", __FILE__, __LINE__);
+      exit(1);
+    }
+    if (pthread_detach(dump_thread)) {
+      fprintf(stderr, "RDMA lib: SEND: ERROR: pthread detach failed @ %s:%d", __FILE__, __LINE__);
+      exit(1);
+    }
+  }
+  pthread_mutex_unlock(&compress_mutex);
+}
+
+int dump_ckpt(struct write_args *cwa)
+{
+  int fd;
+  int n_write = 0;
+  int n_write_sum = 0;
+  double write_s, write_e;
+  char *path = cwa->path;
+  char *addr = cwa->addr;
+  int size   = cwa->size;
+
+
+  write_s = get_dtime();
+  fd = open(path, O_WRONLY | O_APPEND | O_CREAT, S_IREAD | S_IWRITE); 
+  //  fprintf(stderr, "path: |%s|, size: %d, fd=%d\n",  path, size, fd);
+  //fd = open("/scr//test", O_WRONLY | O_APPEND | O_CREAT, S_IREAD | S_IWRITE); 
+  if (fd <= 0) {
+    fprintf(stderr, "error(%d): path: |%s|, size: %d, fd=%d\n",  errno, path, size, fd);
+    exit(1);
+  }
+  //  return  write_ckpt(path, fd, addr, size);
+
+  do {
+    //    fprintf(stderr, "Write: addr:%lu, off:%lu\n", addr, n_write_sum);
+    n_write = write(fd, (char*)addr + n_write_sum, size - n_write_sum);
+    if (n_write == -1) {
+      fprintf(stderr, "Write error: %d\n", errno);
+      exit(1);
+    }
+    n_write_sum += n_write;
+    //    fprintf(stderr, "Write: %d sum=%d, size=%d\n", n_write, n_write_sum, size);
+    if (n_write_sum >= size) break;
+  } while(n_write > 0);
+  fsync(fd);
+  close(fd);
+  write_e = get_dtime();
+  fprintf(stderr, "OVLP: WRIT %f %d %f %f\n", write_s, dump_count, write_e, write_e - write_s);
+  fprintf(stderr, "OVLP: WRIT %f %d\n", write_e, dump_count++);
+  fprintf(stderr, "OVLP: WRIT \n");
+  //  printf("dumping...ends\n");
+  free(cwa);
+  //TODO: free
+  //  free(cwa->path);
+  free(cwa->addr);
+  pthread_mutex_unlock(&dump_mutex);
+}
+
+
+/* reliable write to opened file descriptor (retries, if necessary, until hard error) */
+/*
+ssize_t write_ckpt(const char* file, int fd, const void* buf, size_t size)
+{
+  ssize_t n = 0;
+  int retries = 10;
+  while (n < size)
+  {
+     ssize_t rc = write(fd, (char*) buf + n, size - n);
+     if (rc > 0) {
+       n += rc;
+     } else if (rc == 0) {
+       fprintf(stderr, "rc=0:\n");
+       exit(1);
+     } else {
+       if (errno == EINTR || errno == EAGAIN) {
+	 
+         continue;
+       }
+       retries--;
+       if (retries) {
+	 fprintf(stderr, "retry:\n");
+       } else {
+	 fprintf(stderr, "many retry:\n");
+         exit(1);
+       }
+     }
+   }
+   return n;
+}
+*/
