@@ -767,12 +767,9 @@ int main (int argc, char *argv[])
 static int transfer_init(void)
 {
   int i;
-  //  param.host = "10.1.6.178";
   RDMA_Active_Init(&comm, &param);
-  //  fprintf(stderr, "Connected to %s\n", param.host);
   for (i = 0; i < NUM_BUFFS; i++) {
     buff[i] = RDMA_Alloc(scr_file_buf_size);
-    //    fprintf(stderr, "scr_file_buf_size: %d\n", scr_file_buf_size);
   }
   return 1;
 }
@@ -792,39 +789,20 @@ static int file_transfer(char *from, char* to)
   ctl.size = get_file_size(from);  
 
   RDMA_Send(&ctl, sizeof(ctl), NULL, ctl.id, 0, &comm);
-  //  fprintf(stderr, "PATH: %s %s (%d)\n", from, to, ctl.id);
-
-  //  RDMA_Isend(&ctl, sizeof(ctl), NULL, ctl.id, 0, &comm, &init_req);
 
   fd_src = scr_open(from, O_RDONLY);
   int send_count = 0;
   for (i = 0; i < NUM_BUFF; i++) {
-    //    struct msg_header msgh;
-    fprintf(stderr, "read : %d ...", buff_index);
+    //    fprintf(stderr, "read : %d ...", buff_index);
     nread = scr_read(from, fd_src, buff[buff_index], scr_file_buf_size);
-    fprintf(stderr, "done (%d) \n", nread);
-    //    nread = scr_read(from, fd_src, buff[buff_index] + sizeof(struct msg_header), scr_file_buf_size - sizeof(struct msg_header));
-    //    memcpy(buff[buff_index], &nread, sizeof(int));
-    //    memcpy(buff[buff_index] + sizeof(int), &ctl.id, sizeof(int));
-    //    fprintf(stderr, "%p: nread: %d\n", &ctl,  nread);
-    //    if (init) {
-    //      fprintf(tderr, "%p: init_wait\n", &ctl);
-    //      RDMA_Wait(&init_req);
-    //      init = 0;
-    //    }
+    //    fprintf(stderr, "done (%d) \n", nread);
     if (!nread) {
-      //TODO: do test
       while (send_count > 0) {
 	buff_index = (buff_index + 1) % NUM_BUFF;
-	//
-	//	fprintf(stderr, "%p: RDMA Wait 1 start: index: %d \n", &ctl, buff_index);
-	fprintf(stderr, "Wait : %d ...", buff_index);
+	//	fprintf(stderr, "Wait : %d ...", buff_index);
 	RDMA_Wait(&req[buff_index]);
 	send_count--;
-	fprintf(stderr, "%p: DONE\n");
-	//	fprintf(stderr, "%p: RDMA Wait 1 end: index: %d \n", &ctl, buff_index);
-	//	fprintf(stderr, "\n");
-
+	//	fprintf(stderr, "%p: DONE\n");
       }
       return 0;
     }
@@ -834,20 +812,14 @@ static int file_transfer(char *from, char* to)
     //    fprintf(stderr, "DONE (count:%d)\n", send_count);
     buff_index = (buff_index + 1) % NUM_BUFF;
   }
-  //  fprintf(stderr, "Eager loop ends\n");
-  fprintf(stderr, "TEST !!\n");
+  //  fprintf(stderr, "TEST !!\n");
   while(1) {
-    //    fprintf(stderr, "Wait : %d ...", buff_index);
     RDMA_Wait(&req[buff_index]);
     send_count--;
-    //    fprintf(stderr, "DONE (count:%d)\n", send_count);
-    //    nread = scr_read(from, fd_src, buff[buff_index] + sizeof(int), scr_file_buf_size - sizeof(int));
-    //    memcpy(buff[buff_index], &nread, sizeof(int));
-    fprintf(stderr, "Read : %d ...", buff_index);
+    //    fprintf(stderr, "Read : %d ...", buff_index);
     nread = scr_read(from, fd_src, buff[buff_index], scr_file_buf_size);
-    fprintf(stderr, "done (%d) \n", nread);
+    //    fprintf(stderr, "done (%d) \n", nread);
     if (!nread) {
-      //TODO: do test
       while (send_count > 0) {
 	buff_index = (buff_index + 1) % NUM_BUFF;
 	//	fprintf(stderr, "RDMA Wait1: %d  ... ", buff_index);
@@ -864,7 +836,6 @@ static int file_transfer(char *from, char* to)
     buff_index = (buff_index + 1) % NUM_BUFF;
   }
 
-  //TODO: do test
   for (j = 0; j < NUM_BUFF; j++) {
     buff_index = (buff_index + 1) % NUM_BUFF;
     RDMA_Wait(&req[buff_index]);
@@ -898,7 +869,6 @@ static int get_id(void)
   ifr.ifr_addr.sa_family = AF_INET;
   strncpy(ifr.ifr_name, "ib0", IFNAMSIZ-1);
   ioctl(fd, SIOCGIFADDR, &ifr);
-  //  printf("%s\n", inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
   ip = inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
   close(fd);
   strtok(ip, ".");  strtok(NULL, ".");
